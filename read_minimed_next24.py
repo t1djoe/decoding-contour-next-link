@@ -875,9 +875,12 @@ if __name__ == '__main__':
     print "Temp basal percentage: {0}%".format( status.tempBasalPercentage )
     print "Units remaining: {0:.3f}U".format( status.insulinUnitsRemaining )
     print "Battery remaining: {0}%".format( status.batteryLevelPercentage )
-
-    epoch_time = int(time.mktime(time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S')) - time.timezone ) 
-    epoch_time = epoch_time - time.localtime(epoch_time).tm_isdst*3600
+    
+    try:
+        epoch_time = int(time.mktime(time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S')) - time.timezone ) 
+        epoch_time = epoch_time - time.localtime(epoch_time).tm_isdst*3600
+    except:
+        epoch_time = int(time.time() - time.timezone)
 
     with open('latest_sg.json','w') as text_file:
         text_file.write('"value":"{0}","sgv":{0},"type":"sgv","dateString":"{1}","date":{2}'.format( status.sensorBGL, time.strftime("%Y-%m-%dT%H:%M:%S%z", time.localtime(epoch_time)) , epoch_time*1000 ))

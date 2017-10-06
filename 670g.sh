@@ -82,7 +82,7 @@ fi
 echo
 echo "Checking for Bayer..."
 lsusb > /root/lsusb.log
-grep 'Bayer' /home/root/lsusb.log > /home/chip/decoding_contour/usb.log
+grep 'Bayer' /root/lsusb.log > /root/usb.log
 # Bayer will be listed -  "Bayer Health Care LLC"
 # Action (if required): reboot (ffs, got to be a better way :o )
 if [ ! -s /root/usb.log  ] 

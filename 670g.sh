@@ -81,11 +81,11 @@ fi
 
 echo
 echo "Checking for Bayer..."
-lsusb > /home/chip/decoding_contour/lsusb.log
-grep 'Bayer' /home/chip/decoding_contour/lsusb.log > /home/chip/decoding_contour/usb.log
+lsusb > /root/lsusb.log
+grep 'Bayer' /home/root/lsusb.log > /home/chip/decoding_contour/usb.log
 # Bayer will be listed -  "Bayer Health Care LLC"
 # Action (if required): reboot (ffs, got to be a better way :o )
-if [ ! -s /home/chip/decoding_contour/usb.log  ] 
+if [ ! -s /root/usb.log  ] 
 then 
 	echo 'Announcement - USB Loss'
 	echo '{"enteredBy": "Uploader", "eventType": "Announcement", "reason": "", "notes": "Cycle Bayer Power", "created_at": "'$(date +"%Y-%m-%dT%H:%M:%S.000%z")$'", " isAnnouncement": true }' > announcement.json

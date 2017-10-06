@@ -44,7 +44,7 @@ COUNT=0
 MAXCNT=2880
 until [ $COUNT -gt $MAXCNT ]; do
 
-cd /root/decoding_contour_next_link
+cd /root/decoding-contour-next-link
 
 python read_minimed_next24.py
 sleep 10

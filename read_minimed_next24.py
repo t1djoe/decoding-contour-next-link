@@ -879,9 +879,12 @@ if __name__ == '__main__':
     try:
 #        epoch_time = int(time.mktime(time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S')) - time.timezone ) 
         epoch_time = int(time.mktime(time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S'))) 
+        print "calculating epoch time..."
         epoch_time = epoch_time - time.localtime(epoch_time).tm_isdst*3600
+        print "adjusting for dst..."
     except:
-        epoch_time = int(time.time() - time.timezone)
+        epoch_time = int(time.time())
+        print "defaulting to local time..."
 
     with open('latest_sg.json','w') as text_file:
         text_file.write('"value":"{0}","sgv":{0},"type":"sgv","dateString":"{1}","date":{2}'.format( status.sensorBGL, time.strftime("%Y-%m-%dT%H:%M:%S%z", time.localtime(epoch_time)) , epoch_time*1000 ))

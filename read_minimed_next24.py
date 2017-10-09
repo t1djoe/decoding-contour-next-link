@@ -878,6 +878,9 @@ if __name__ == '__main__':
     
     try:
 #        epoch_time = int(time.mktime(time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S')) - time.timezone ) 
+        print time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp )
+        print time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S')
+        print int(time.mktime(time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S'))) 
         epoch_time = int(time.mktime(time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S'))) 
         print "calculating epoch time..."
         epoch_time = epoch_time - time.localtime(epoch_time).tm_isdst*3600
@@ -896,6 +899,9 @@ if __name__ == '__main__':
         else:
             with open('latest_basal.json','w') as text_file:
                 text_file.write('"value":"ChangeProgrammedTempBasal","eventType":"Temp Basal","duration":{0},"absolute":{1},"enteredBy":"pump","dateString":"{2}","created_at":"{3}","date":{4}'.format( int(status.tempBasalMinutesRemaining), status.tempBasalRate/10000, time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime(epoch_time)), time.strftime("%Y-%m-%dT%H:%M:%S.000+0"+str(time.localtime(epoch_time).tm_isdst)+":00", time.localtime(epoch_time)) , epoch_time*1000 ))
+    else:
+        with open('latest_basal.json','w') as text_file:
+            text_file.write('"value":"StandardBasal","eventType":"Standard Basal","duration":{0},"absolute":{1},"enteredBy":"pump","dateString":"{2}","created_at":"{3}","date":{4}'.format( int(30), status.currentBasalRate/10000, time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime(epoch_time)), time.strftime("%Y-%m-%dT%H:%M:%S.000+0"+str(time.localtime(epoch_time).tm_isdst)+":00", time.localtime(epoch_time)) , epoch_time*1000 ))        
     
     #print binascii.hexlify( mt.doRemoteSuspend().responsePayload )
 

@@ -2,27 +2,7 @@
 # Initialising Carelink Automation
 # Proof of concept ONLY - 640g csv to NightScout
 #
-echo '*****************************'
-echo '***       CHIP640G       ***'
-echo '*** FOR TEST PURPOSES ONLY***'
-echo '*Only Use If You Accept This*'
-echo '* Started 5th May 2016      *'
-echo '*** Thanks - @LittleDMatt ***'
-echo '*****************************'
-VERSION='V0.12 10th May 2016'
-echo $VERSION
-echo
-echo "Indebted to Lennart Goerdhart for https://github.com/pazaan/decoding-contour-next-link"
-echo "Please use with caution. There'll be bugs here..."
-echo "You run this at your own risk."
-echo "Thank you."
-
-echo '*****************************'
-echo ' Known Issues TO (TRY TO) FIX'
-echo '*****************************'
-echo 'Tons - this is thrown together...'
-echo '*****************************'
-echo Setting Varables...
+echo Setting Varables... > /root/670g.log
 source chip_config.sh
 
 # Capture empty JSON files later ie "[]"
@@ -60,7 +40,7 @@ then
 	more latest_sg.json
 	curl -s -X POST --header "Content-Type: application/json" --header "Accept: application/json" --header "api-secret:"$api_secret_hash --data-binary @latest_sg.json "$your_nightscout"$"/api/v1/entries"
 fi
-echo
+
 # And now basal info
 # filesize=$(wc -c <latest_basal.json)
 filesize=0

@@ -2,7 +2,7 @@
 # Initialising Carelink Automation
 # Proof of concept ONLY - 640g csv to NightScout
 #
-echo Setting Variables... > /root/670g.log
+echo Setting Variables... >> /root/670g.log
 source chip_config.sh
 
 # Capture empty JSON files later ie "[]"
@@ -56,15 +56,15 @@ then
 	curl -s -X POST --header "Content-Type: application/json" --header "Accept: application/json" --header "api-secret:"$api_secret_hash --data-binary @latest_basal.json "$your_nightscout"$"/api/v1/treatments"
 fi
 
-echo  > /root/670g.log
-echo "Checking for Bayer..."  > /root/670g.log
+echo  >> /root/670g.log
+echo "Checking for Bayer..."  >> /root/670g.log
 lsusb > /root/lsusb.log
 grep 'Bayer' /root/lsusb.log > /root/usb.log
 # Bayer will be listed -  "Bayer Health Care LLC"
 # Action (if required): reboot (ffs, got to be a better way :o )
 if [ ! -s /root/usb.log  ] 
 then 
-	echo 'Announcement - USB Loss'  > /root/670g.log
+	echo 'Announcement - USB Loss'  >> /root/670g.log
 	echo '{"enteredBy": "robopanc-ed-209", "eventType": "Announcement", "reason": "", "notes": "Cycle Bayer Power", "created_at": "'$(date +"%Y-%m-%dT%H:%M:%S.000%z")$'", " isAnnouncement": true }' > announcement.json
 	curl -s -X POST --header "Content-Type: application/json" --header "Accept: application/json" --header "api-secret:"$api_secret_hash --data-binary @announcement.json "$your_nightscout"$"/api/v1/treatments"
 #/sbin/shutdown -r +1

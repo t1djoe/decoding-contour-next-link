@@ -877,7 +877,8 @@ if __name__ == '__main__':
     print "Battery remaining: {0}%".format( status.batteryLevelPercentage )
     
     try:
-        epoch_time = int(time.mktime(time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S')) - time.timezone ) 
+#        epoch_time = int(time.mktime(time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S')) - time.timezone ) 
+        epoch_time = int(time.mktime(time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S'))) 
         epoch_time = epoch_time - time.localtime(epoch_time).tm_isdst*3600
     except:
         epoch_time = int(time.time() - time.timezone)

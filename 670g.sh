@@ -40,9 +40,6 @@ uptime1=${uptime%%.*}
 
 # Allow to run for ~240 hours (roughly), ~5 min intervals
 # This thing is bound to need some TLC and don't want it running indefinitely...
-COUNT=0
-MAXCNT=2880
-until [ $COUNT -gt $MAXCNT ]; do
 
 cd /root/decoding-contour-next-link
 
@@ -103,11 +100,5 @@ openaps battery-status
 # Power Action
 cd /root/robopanc-ed-209 && openaps battery-status && cat /root/robopanc-ed-209/monitor/edison-battery.json | json batteryVoltage | awk '{if ($1<=3050)system("sudo shutdown -h now")}'
 
-echo "Waiting..."
-sleep $gap_seconds
 rm -f latest_sg.json
 rm -f latest_basal.json
-
-let COUNT=COUNT+1
-echo $COUNT
-done

@@ -14,6 +14,7 @@ import Crypto.Cipher.AES # pip install PyCrypto
 import sqlite3
 import hashlib
 import re
+import logging
 
 ascii= {
     'ACK' : 0x06,

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+##!/usr/bin/env python
 
 import hid # pip install hidapi - Platform independant
 import astm # pip install astm
@@ -588,16 +588,21 @@ class Medtronic600SeriesDriver( object ):
         self.machine.add_transition( 'beginEHSM', 'negotiate channel', 'EHSM session', before='sendBeginEHSM' )
 
     def openDevice( self ):
-        print "# Opening device"
+        #print "# Opening device"
+        logging.debug("# Opening device")
         self.device = hid.device()
         self.device.open( self.USB_VID, self.USB_PID )
 
-        print "Manufacturer: %s" % self.device.get_manufacturer_string()
-        print "Product: %s" % self.device.get_product_string()
-        print "Serial No: %s" % self.device.get_serial_number_string()
+        #print "Manufacturer: %s" % self.device.get_manufacturer_string()
+        logging.debug("Manufacturer: %s" % self.device.get_manufacturer_string())
+        #print "Product: %s" % self.device.get_product_string()
+        logging.debug("Product: %s" % self.device.get_product_string())
+        #print "Serial No: %s" % self.device.get_serial_number_string()
+        logging.debug("Serial No: %s" % self.device.get_serial_number_string())
 
     def closeDevice( self ):
-        print "# Closing device"
+        #print "# Closing device"
+        logging.debug("# Closing device")        
         self.device.close()
 
     def readMessage( self ):
@@ -625,7 +630,8 @@ class Medtronic600SeriesDriver( object ):
             # print "SEND: " + binascii.hexlify( message ) # Debugging
 
     def requestDeviceInfo( self ):
-        print "# Request Device Info"
+        #print "# Request Device Info"
+        logging.debug("# Request Device Info")
         self.sendMessage( struct.pack( '>B', 0x58 ) )
 
     @property
@@ -636,8 +642,9 @@ class Medtronic600SeriesDriver( object ):
             return self.deviceInfo[0][4][3][1]
 
     def readDeviceInfo( self ):
-        print "# Read Device Info"
-
+        #print "# Read Device Info"
+        logging.debug("# Read Device Info")
+        
         try:
             msg = self.readMessage()
 
@@ -675,7 +682,8 @@ class Medtronic600SeriesDriver( object ):
         self.checkControlMessage( ascii['ACK'] )
 
     def requestOpenConnection( self ):
-        print "# Request Open Connection"
+        #print "# Request Open Connection"
+        logging.debug("# Request Open Connection")
 
         mtMessage = binascii.unhexlify( self.session.HMAC )
         bayerMessage = BayerBinaryMessage( 0x10, self.session, mtMessage )
@@ -683,7 +691,8 @@ class Medtronic600SeriesDriver( object ):
         message = self.readMessage()
 
     def requestReadInfo( self ):
-        print "# Request Read Info"
+        #print "# Request Read Info"
+        logging.debug("# Request Read Info")
         bayerMessage = BayerBinaryMessage( 0x14, self.session )
         self.sendMessage( bayerMessage.encode() )
         response = BayerBinaryMessage.decode( self.readMessage() ) # The response is a 0x14 as well
@@ -692,7 +701,8 @@ class Medtronic600SeriesDriver( object ):
         self.session.pumpMAC = info.pumpMAC
 
     def requestReadLinkKey( self ):
-        print "# Request Read Link Key"
+        #print "# Request Read Link Key"
+        logging.debug("# Request Read Link Key")
         bayerMessage = BayerBinaryMessage( 0x16, self.session )
         self.sendMessage( bayerMessage.encode() )
         response = BayerBinaryMessage.decode( self.readMessage() ) # The response is a 0x14 as well
@@ -700,11 +710,13 @@ class Medtronic600SeriesDriver( object ):
         self.session.KEY = keyRequest.linkKey( self.session.stickSerial )
 
     def doNegotiateChannel( self ):
-        print "# Negotiate pump comms channel"
+        #print "# Negotiate pump comms channel"
+        logging.debug("# Negotiate pump comms channel")
 
         # Scan the last successfully connected channel first, since this could save us negotiating time
         for self.session.radioChannel in [ self.session.config.lastRadioChannel ] + self.CHANNELS:
-            print "Negotiating on channel {0}".format( self.session.radioChannel )
+            #print "Negotiating on channel {0}".format( self.session.radioChannel )
+            logging.debug("Negotiating on channel {0}".format( self.session.radioChannel ))
 
             mtMessage = ChannelNegotiateMessage( self.session )
 
@@ -728,7 +740,8 @@ class Medtronic600SeriesDriver( object ):
             self.session.config.lastRadioChannel = self.session.radioChannel
 
     def sendBeginEHSM( self ):
-        print "# Begin Extended High Speed Mode Session"
+        #print "# Begin Extended High Speed Mode Session"
+        logging.debug("# Begin Extended High Speed Mode Session")
         mtMessage = BeginEHSMMessage( self.session )
 
         bayerMessage = BayerBinaryMessage( 0x12, self.session, mtMessage.encode() )
@@ -736,7 +749,8 @@ class Medtronic600SeriesDriver( object ):
         self.readMessage() # The Begin EHSM only has an 0x81 response.
 
     def getPumpTime( self ):
-        print "# Get Pump Time"
+        #print "# Get Pump Time"
+        logging.debug("# Get Pump Time")
         if self.state != 'EHSM session':
             raise UnexpectedStateException( 'Link needs to be in EHSM to request device time' )
         mtMessage = PumpTimeRequestMessage( self.session )
@@ -748,7 +762,8 @@ class Medtronic600SeriesDriver( object ):
         return PumpTimeResponseMessage.decode( response.payload, self.session )
 
     def getPumpStatus( self ):
-        print "# Get Pump Status"
+        #print "# Get Pump Status"
+        logging.debug("# Get Pump Status")
         if self.state != 'EHSM session':
             raise UnexpectedStateException( 'Link needs to be in EHSM to request device time' )
         mtMessage = PumpStatusRequestMessage( self.session )
@@ -760,7 +775,8 @@ class Medtronic600SeriesDriver( object ):
         return PumpStatusResponseMessage.decode( response.payload, self.session )
 
     def getTempBasalStatus( self ):
-        print "# Get Temp Basal Status"
+        #print "# Get Temp Basal Status"
+        logging.debug("# Get Temp Basal Status")
         if self.state != 'EHSM session':
             raise UnexpectedStateException( 'Link needs to be in EHSM to request device time' )
         mtMessage = PumpTempBasalRequestMessage( self.session )
@@ -772,7 +788,8 @@ class Medtronic600SeriesDriver( object ):
         return MedtronicReceiveMessage.decode( response.payload, self.session )
 
     def getBolusesStatus( self ):
-        print "# Get Boluses Status"
+        #print "# Get Boluses Status"
+        logging.debug("# Get Boluses Status")
         if self.state != 'EHSM session':
             raise UnexpectedStateException( 'Link needs to be in EHSM to request device time' )
         mtMessage = PumpBolusesRequestMessage( self.session )
@@ -784,7 +801,8 @@ class Medtronic600SeriesDriver( object ):
         return MedtronicReceiveMessage.decode( response.payload, self.session )
 
     def getBasicParameters( self ):
-        print "# Get Basic Parameters"
+        #print "# Get Basic Parameters"
+        logging.debug("# Get Basic Parameters")
         if self.state != 'EHSM session':
             raise UnexpectedStateException( 'Link needs to be in EHSM to request device time' )
         mtMessage = BasicNgpParametersRequestMessage( self.session )
@@ -796,7 +814,8 @@ class Medtronic600SeriesDriver( object ):
         return MedtronicReceiveMessage.decode( response.payload, self.session )
 
     def do405Message( self, pumpDateTime ):
-        print "# Send Message Type 405"
+        #print "# Send Message Type 405"
+        logging.debug("# Send Message Type 405")
         if self.state != 'EHSM session':
             raise UnexpectedStateException( 'Link needs to be in EHSM to request device time' )
         mtMessage = Type405RequestMessage( self.session, pumpDateTime )
@@ -808,7 +827,8 @@ class Medtronic600SeriesDriver( object ):
         return MedtronicReceiveMessage.decode( response.payload, self.session )
 
     def do124Message( self, pumpDateTime ):
-        print "# Send Message Type 124"
+        #print "# Send Message Type 124"
+        logging.debug("# Send Message Type 124")
         if self.state != 'EHSM session':
             raise UnexpectedStateException( 'Link needs to be in EHSM to request device time' )
         mtMessage = Type124RequestMessage( self.session, pumpDateTime )
@@ -820,7 +840,8 @@ class Medtronic600SeriesDriver( object ):
         return MedtronicReceiveMessage.decode( response.payload, self.session )
 
     def doRemoteBolus( self, bolusID, amount, execute ):
-        print "# Execute Remote Bolus"
+        #print "# Execute Remote Bolus"
+        logging.debug("# Execute Remote Bolus")
         if self.state != 'EHSM session':
             raise UnexpectedStateException( 'Link needs to be in EHSM to request device time' )
         mtMessage = PumpRemoteBolusRequestMessage( self.session, bolusID, amount, execute )
@@ -832,7 +853,8 @@ class Medtronic600SeriesDriver( object ):
         return MedtronicReceiveMessage.decode( response.payload, self.session )
 
     def doRemoteSuspend( self ):
-        print "# Execute Remote Suspend"
+        #print "# Execute Remote Suspend"
+        logging.debug("# Execute Remote Suspend")
         if self.state != 'EHSM session':
             raise UnexpectedStateException( 'Link needs to be in EHSM to request device time' )
         mtMessage = SuspendResumeRequestMessage( self.session )
@@ -840,16 +862,19 @@ class Medtronic600SeriesDriver( object ):
         bayerMessage = BayerBinaryMessage( 0x12, self.session, mtMessage.encode() )
         self.sendMessage( bayerMessage.encode() )
         response81 = BayerBinaryMessage.decode( self.readMessage() ) # Read the 0x81
-        print binascii.hexlify( response81.payload )
-
+        #print binascii.hexlify( response81.payload )
+        logging.debug(binascii.hexlify( response81.payload ))
+        
         response = BayerBinaryMessage.decode( self.readMessage() ) # Read the 0x80
         return MedtronicReceiveMessage.decode( response.payload, self.session )
 
 if __name__ == '__main__':
+    logging.basicConfig(filename='/root/670g.log',level=logging.DEBUG)
     mt = Medtronic600SeriesDriver()
     mt.initDevice()
     mt.getDeviceInfo()
-    print mt.deviceSerial
+    #print mt.deviceSerial
+    logging.debug(mt.deviceSerial)
     mt.controlMode()
     mt.passthroughMode()
     mt.openConnection()
@@ -858,37 +883,57 @@ if __name__ == '__main__':
     mt.negotiateChannel()
     mt.beginEHSM()
 
-    print binascii.hexlify( mt.getBasicParameters().responsePayload )
+    #print binascii.hexlify( mt.getBasicParameters().responsePayload )
+    logging.debug(binascii.hexlify( mt.getBasicParameters().responsePayload ))
     pumpDatetime = mt.getPumpTime()
-    print pumpDatetime.encodedDatetime
-    print "{0:x}".format(pumpDatetime.encodedDatetime)
-    print pumpDatetime.datetime.strftime( "Pump time is: %c" )
-
+    #print pumpDatetime.encodedDatetime
+    logging.debug(pumpDatetime.encodedDatetime)
+    #print "{0:x}".format(pumpDatetime.encodedDatetime)
+    logging.debug("{0:x}".format(pumpDatetime.encodedDatetime))
+    #print pumpDatetime.datetime.strftime( "Pump time is: %c" )
+    logging.debug(pumpDatetime.datetime.strftime( "Pump time is: %c" ))
+        
     status = mt.getPumpStatus()
-    print binascii.hexlify( status.responsePayload )
-    print "Active Insulin: {0:.3f}U".format( status.activeInsulin )
-    print "Sensor BGL: {0} mg/dL ({1:.1f} mmol/L) at {2}".format( status.sensorBGL,
-        status.sensorBGL / 18.016,
-        status.sensorBGLTimestamp.strftime( "%c" ) )
-    print "BGL trend: {0}".format( status.trendArrow )
-    print "Current basal rate: {0:.3f}U".format( status.currentBasalRate )
-    print "Temp basal rate: {0:.3f}U".format( status.tempBasalRate )
-    print "Temp basal percentage: {0}%".format( status.tempBasalPercentage )
-    print "Units remaining: {0:.3f}U".format( status.insulinUnitsRemaining )
-    print "Battery remaining: {0}%".format( status.batteryLevelPercentage )
+    #print binascii.hexlify( status.responsePayload )
+    logging.debug(binascii.hexlify( status.responsePayload ))
+    #print "Active Insulin: {0:.3f}U".format( status.activeInsulin )
+    logging.debug("Active Insulin: {0:.3f}U".format( status.activeInsulin ))
+    #print "Sensor BGL: {0} mg/dL ({1:.1f} mmol/L) at {2}".format( status.sensorBGL, status.sensorBGL / 18.016, status.sensorBGLTimestamp.strftime( "%c" ) )
+    logging.debug("Sensor BGL: {0} mg/dL ({1:.1f} mmol/L) at {2}".format( status.sensorBGL, status.sensorBGL / 18.016, status.sensorBGLTimestamp.strftime( "%c" ) ))
+    #print "BGL trend: {0}".format( status.trendArrow )
+    logging.debug("BGL trend: {0}".format( status.trendArrow ))
+    #print "Current basal rate: {0:.3f}U".format( status.currentBasalRate )
+    logging.debug("Current basal rate: {0:.3f}U".format( status.currentBasalRate ))
+    #print "Temp basal rate: {0:.3f}U".format( status.tempBasalRate )
+    logging.debug("Temp basal rate: {0:.3f}U".format( status.tempBasalRate ))
+    #print "Temp basal percentage: {0}%".format( status.tempBasalPercentage )
+    logging.debug("Temp basal percentage: {0}%".format( status.tempBasalPercentage ))
+    #print "Units remaining: {0:.3f}U".format( status.insulinUnitsRemaining )
+    logging.debug("Units remaining: {0:.3f}U".format( status.insulinUnitsRemaining ))
+    #print "Battery remaining: {0}%".format( status.batteryLevelPercentage )
+    logging.debug("Battery remaining: {0}%".format( status.batteryLevelPercentage ))
     
     try:
 #        epoch_time = int(time.mktime(time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S')) - time.timezone ) 
-        print time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp )
-        print time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S')
-        print int(time.mktime(time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S'))) 
+        #print time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp )
+        logging.debug("srtftime...")
+        logging.debug(time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ))
+        #print time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S')
+        logging.debug("srtptime...")
+        logging.debug(time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S'))
+        #print int(time.mktime(time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S'))) 
+        logging.debug("mktime...")
+        logging.debug(int(time.mktime(time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S'))) )
         epoch_time = int(time.mktime(time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S'))) 
-        print "calculating epoch time..."
+        #print "calculating epoch time..."
+        logging.debug("calculating epoch time...")
         epoch_time = epoch_time - time.localtime(epoch_time).tm_isdst*3600
-        print "adjusting for dst..."
+        #print "adjusting for dst..."
+        logging.debug("adjusting for dst...")
     except:
         epoch_time = int(time.time())
-        print "defaulting to local time..."
+        #print "defaulting to local time..."
+        logging.debug("defaulting to local time...")
 
     with open('latest_sg.json','w') as text_file:
         text_file.write('"value":"{0}","sgv":{0},"type":"sgv","dateString":"{1}","date":{2}'.format( status.sensorBGL, time.strftime("%Y-%m-%dT%H:%M:%S%z", time.localtime(epoch_time)) , epoch_time*1000 ))

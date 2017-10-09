@@ -65,7 +65,7 @@ grep 'Bayer' /root/lsusb.log > /root/usb.log
 if [ ! -s /root/usb.log  ] 
 then 
 	echo 'Announcement - USB Loss'
-	echo '{"enteredBy": "Uploader", "eventType": "Announcement", "reason": "", "notes": "Cycle Bayer Power", "created_at": "'$(date +"%Y-%m-%dT%H:%M:%S.000%z")$'", " isAnnouncement": true }' > announcement.json
+	echo '{"enteredBy": "robopanc-ed-209", "eventType": "Announcement", "reason": "", "notes": "Cycle Bayer Power", "created_at": "'$(date +"%Y-%m-%dT%H:%M:%S.000%z")$'", " isAnnouncement": true }' > announcement.json
 	curl -s -X POST --header "Content-Type: application/json" --header "Accept: application/json" --header "api-secret:"$api_secret_hash --data-binary @announcement.json "$your_nightscout"$"/api/v1/treatments"
 #/sbin/shutdown -r +1
 fi

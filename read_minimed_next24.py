@@ -470,8 +470,13 @@ class PumpStatusResponseMessage( MedtronicReceiveMessage ):
     @property
     def sensorBGLTimestamp( self ):
         dateTimeData = struct.unpack( '>Q', self.responsePayload[55:63] )[0]
-        return DateTimeHelper.decodeEpochTime( dateTimeData )
+        return DateTimeHelper.decodeDateTime( dateTimeData )
 
+    @property
+    def sensorBGLEpochTime( self ):
+        dateTimeData = struct.unpack( '>Q', self.responsePayload[55:63] )[0]
+        return DateTimeHelper.decodeEpochTime( dateTimeData )    
+    
     @property
     def recentBolusWizard( self ):
         if struct.unpack( 'B', self.responsePayload[72:72] )[0] == 0:
@@ -897,6 +902,7 @@ if __name__ == '__main__':
 #        epoch_time = int(time.mktime(time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S')) - time.timezone ) 
         print "sensorBGLTimestamp..."
         print status.sensorBGLTimestamp
+        print status.sensorBGLEpochTime
         #print "srtftime..."
         #print time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp )
         print "strptime..."
@@ -907,7 +913,7 @@ if __name__ == '__main__':
         #print(int(time.mktime(time.strptime( status.sensorBGLTimestamp , '%Y-%m-%d %H:%M:%S'))))
         #print "calculating epoch time..."
         #epoch_time = int(time.mktime(time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S'))) 
-        epoch_time = status.sensorBGLTimestamp
+        epoch_time = status.sensorBGLEpochTime
         epoch_time = epoch_time - time.localtime(epoch_time).tm_isdst*3600
         print(epoch_time)
         print "adjusting for dst..."

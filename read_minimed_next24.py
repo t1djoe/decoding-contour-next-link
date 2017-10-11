@@ -878,6 +878,7 @@ if __name__ == '__main__':
 #        epoch_time = int(time.mktime(time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S')) - time.timezone ) 
         print "sensorBGLTimestamp..."
         print status.sensorBGLTimestamp
+        print int(status.sensorBGLTimestamp)
         #print "srtftime..."
         #print time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp )
         print "strptime..."
@@ -885,11 +886,12 @@ if __name__ == '__main__':
         print(time.strptime( status.sensorBGLTimestamp , '%Y-%m-%d %H:%M:%S'))
         print "mktime..."     
         #print int(time.mktime(time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S'))) 
-        print int(time.mktime(time.strptime( status.sensorBGLTimestamp , '%Y-%m-%d %H:%M:%S'))) 
+        print(int(time.mktime(time.strptime( status.sensorBGLTimestamp , '%Y-%m-%d %H:%M:%S'))))
         print "calculating epoch time..."
         #epoch_time = int(time.mktime(time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S'))) 
         epoch_time = int(time.mktime(time.strptime( status.sensorBGLTimestamp , '%Y-%m-%d %H:%M:%S'))) 
         epoch_time = epoch_time - time.localtime(epoch_time).tm_isdst*3600
+        print(epoch_time)
         print "adjusting for dst..."
     except:
         epoch_time = int(time.time())

@@ -876,6 +876,8 @@ if __name__ == '__main__':
     
     try:
 #        epoch_time = int(time.mktime(time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S')) - time.timezone ) 
+        print "sensorBGLTimestamp..."
+        print status.sensorBGLTimestamp
         print "srtftime..."
         print time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp )
         print "srtptime..."

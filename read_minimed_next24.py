@@ -115,8 +115,8 @@ class DateTimeHelper( object ):
         localTz = tz.tzlocal()
         return datetime.datetime.fromtimestamp( epochTime, localTz )
     
-        @staticmethod
-    def decodeEpochTime( pumpDateTime ):
+      @staticmethod
+      def decodeEpochTime( pumpDateTime ):
         rtc = ( pumpDateTime >> 32 ) & 0xffffffff
         offset = ( pumpDateTime & 0xffffffff ) - 0x100000000
 

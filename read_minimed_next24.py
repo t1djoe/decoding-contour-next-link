@@ -845,7 +845,6 @@ class Medtronic600SeriesDriver( object ):
         return MedtronicReceiveMessage.decode( response.payload, self.session )
 
 if __name__ == '__main__':
-    logging.basicConfig(filename='/root/670g.log',level=logging.DEBUG)
     mt = Medtronic600SeriesDriver()
     mt.initDevice()
     mt.getDeviceInfo()

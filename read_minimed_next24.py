@@ -880,9 +880,9 @@ if __name__ == '__main__':
         print status.sensorBGLTimestamp
         #print "srtftime..."
         #print time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp )
-        print "srtptime..."
+        print "strptime..."
         #print time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S')
-        print time.strptime( status.sensorBGLTimestamp , '%Y-%m-%d %H:%M:%S')
+        print(time.strptime( status.sensorBGLTimestamp , '%Y-%m-%d %H:%M:%S'))
         print "mktime..."     
         #print int(time.mktime(time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S'))) 
         print int(time.mktime(time.strptime( status.sensorBGLTimestamp , '%Y-%m-%d %H:%M:%S'))) 

@@ -470,7 +470,7 @@ class PumpStatusResponseMessage( MedtronicReceiveMessage ):
     @property
     def sensorBGLTimestamp( self ):
         dateTimeData = struct.unpack( '>Q', self.responsePayload[55:63] )[0]
-        return DateTimeHelper.decodeDateTime( dateTimeData )
+        return DateTimeHelper.decodeEpochTime( dateTimeData )
 
     @property
     def recentBolusWizard( self ):

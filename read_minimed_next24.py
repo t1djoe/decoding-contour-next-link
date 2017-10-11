@@ -914,7 +914,6 @@ if __name__ == '__main__':
         #print "calculating epoch time..."
         #epoch_time = int(time.mktime(time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S'))) 
         epoch_time = status.sensorBGLEpochTime
-        epoch_time = epoch_time - time.localtime(epoch_time).tm_isdst*3600
         print(epoch_time)
         print "adjusting for dst..."
     except:

@@ -23,9 +23,9 @@ uptime1=${uptime%%.*}
 
 cd /root/decoding-contour-next-link
 
-python read_minimed_next24.py
+python read_minimed_next24.py >> /root/670g.log
 sleep 10
-python read_minimed_next24.py
+python read_minimed_next24.py >> /root/670g.log
 	
 # Time to extract and upload entries (SG only)
 filesize=0
@@ -56,7 +56,6 @@ then
 	curl -s -X POST --header "Content-Type: application/json" --header "Accept: application/json" --header "api-secret:"$api_secret_hash --data-binary @latest_basal.json "$your_nightscout"$"/api/v1/treatments"
 fi
 
-echo  >> /root/670g.log
 echo "Checking for Bayer..."  >> /root/670g.log
 lsusb > /root/lsusb.log
 grep 'Bayer' /root/lsusb.log > /root/usb.log

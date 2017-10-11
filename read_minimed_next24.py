@@ -114,7 +114,26 @@ class DateTimeHelper( object ):
         # (so that we can convert to UTC for Nightscout later)
         localTz = tz.tzlocal()
         return datetime.datetime.fromtimestamp( epochTime, localTz )
+    
+        @staticmethod
+    def decodeEpochTime( pumpDateTime ):
+        rtc = ( pumpDateTime >> 32 ) & 0xffffffff
+        offset = ( pumpDateTime & 0xffffffff ) - 0x100000000
 
+        # Base time is midnight 1st Jan 2000 (UTC)
+        baseTime = 946684800;
+
+        # The time from the pump represents epochTime in UTC, but we treat it as if it were in our own timezone
+        # We do this, because the pump does not have a concept of timezone
+        # For example, if baseTime + rtc + offset was 1463137668, this would be
+        # Fri, 13 May 2016 21:07:48 UTC.
+        # However, the time the pump *means* is Fri, 13 May 2016 21:07:48 in our own timezone
+        offsetFromUTC = int(datetime.datetime.utcnow().strftime('%s')) - int(datetime.datetime.now().strftime('%s'))
+        epochTime = baseTime + rtc + offset + offsetFromUTC
+        if epochTime < 0:
+            epochTime = 0
+        return epochTime
+        
 class MedtronicSession( object ):
     radioChannel = None
     bayerSequenceNumber = 1
@@ -878,18 +897,17 @@ if __name__ == '__main__':
 #        epoch_time = int(time.mktime(time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S')) - time.timezone ) 
         print "sensorBGLTimestamp..."
         print status.sensorBGLTimestamp
-        print int(status.sensorBGLTimestamp)
         #print "srtftime..."
         #print time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp )
         print "strptime..."
         #print time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S')
-        print(time.strptime( status.sensorBGLTimestamp , '%Y-%m-%d %H:%M:%S'))
-        print "mktime..."     
+        #print(time.strptime( status.sensorBGLTimestamp , '%Y-%m-%d %H:%M:%S'))
+        #print "mktime..."     
         #print int(time.mktime(time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S'))) 
-        print(int(time.mktime(time.strptime( status.sensorBGLTimestamp , '%Y-%m-%d %H:%M:%S'))))
-        print "calculating epoch time..."
+        #print(int(time.mktime(time.strptime( status.sensorBGLTimestamp , '%Y-%m-%d %H:%M:%S'))))
+        #print "calculating epoch time..."
         #epoch_time = int(time.mktime(time.strptime( time.strftime( "%Y-%m-%d %H:%M:%S", status.sensorBGLTimestamp ), '%Y-%m-%d %H:%M:%S'))) 
-        epoch_time = int(time.mktime(time.strptime( status.sensorBGLTimestamp , '%Y-%m-%d %H:%M:%S'))) 
+        epoch_time = status.sensorBGLTimestamp
         epoch_time = epoch_time - time.localtime(epoch_time).tm_isdst*3600
         print(epoch_time)
         print "adjusting for dst..."

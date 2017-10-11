@@ -37,7 +37,7 @@ if [ $filesize -gt $EMPTYSIZE ]
 then
 	sed -i '1s/^/[{/' latest_sg.json
 	echo '}]' >> latest_sg.json
-	more latest_sg.json
+	more latest_sg.json >> /root/670g.log
 	curl -s -X POST --header "Content-Type: application/json" --header "Accept: application/json" --header "api-secret:"$api_secret_hash --data-binary @latest_sg.json "$your_nightscout"$"/api/v1/entries"
 fi
 
@@ -52,7 +52,7 @@ if [ $filesize -gt $EMPTYSIZE ]
 then
 	sed -i '1s/^/[{/' latest_basal.json
 	echo '}]' >> latest_basal.json
-	more latest_basal.json
+	more latest_basal.json >> /root/670g.log
 	curl -s -X POST --header "Content-Type: application/json" --header "Accept: application/json" --header "api-secret:"$api_secret_hash --data-binary @latest_basal.json "$your_nightscout"$"/api/v1/treatments"
 fi
 
